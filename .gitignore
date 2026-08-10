@@ -1,0 +1,31 @@
+# Local Terraform provider/module cache
+# (recreated on every "terraform init", should never be committed)
+.terraform/
+
+# Provider lock file is intentionally NOT ignored — .terraform.lock.hcl
+# should be committed to ensure consistent provider versions across the team
+
+# Local state files — NEVER commit these
+# (state can contain sensitive data in plain text, e.g. passwords, connection strings)
+*.tfstate
+*.tfstate.*
+
+# Variable files that may contain secrets
+*.tfvars
+*.tfvars.json
+!example.tfvars
+
+# Saved Terraform plan (may also contain sensitive data)
+*.tfplan
+crash.log
+crash.*.log
+
+# Local environment/secret files
+.env
+*.pem
+*.key
+
+# System/IDE files
+.DS_Store
+Thumbs.db
+.vscode/
