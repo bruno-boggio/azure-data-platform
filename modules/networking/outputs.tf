@@ -13,7 +13,12 @@ output "private_endpoints_subnet_id" {
   value       = azurerm_subnet.private_endpoints.id
 }
 
-output "databricks_subnet_id" {
-  description = "ID of the databricks subnet"
-  value       = azurerm_subnet.databricks.id
+output "databricks_public_subnet_id" {
+  description = "ID of the databricks public subnet"
+  value       = azurerm_subnet.databricks_public.id
+}
+
+output "databricks_private_subnet_id" {
+  description = "ID of the databricks private subnet"
+  value       = azurerm_subnet.databricks_private.id
 }

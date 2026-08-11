@@ -15,12 +15,33 @@ resource "azurerm_subnet" "private_endpoints" {
   address_prefixes     = [var.private_endpoints_subnet_prefix]
 }
 
-# Subnet dedicated to Databricks
-resource "azurerm_subnet" "databricks" {
-  name                 = "snet-databricks"
+# Public subnet for Databricks (hosts internal load balancers)
+resource "azurerm_subnet" "databricks_public" {
+  name                 = "snet-databricks-public"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.this.name
-  address_prefixes     = [var.databricks_subnet_prefix]
+  address_prefixes     = [var.databricks_public_subnet_prefix]
+
+  delegation {
+    name = "databricks-delegation"
+
+    service_delegation {
+      name = "Microsoft.Databricks/workspaces"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+        "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action",
+      ]
+    }
+  }
+}
+
+# Private subnet for Databricks (hosts the cluster worker nodes)
+resource "azurerm_subnet" "databricks_private" {
+  name                 = "snet-databricks-private"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = [var.databricks_private_subnet_prefix]
 
   delegation {
     name = "databricks-delegation"
@@ -134,8 +155,14 @@ resource "azurerm_network_security_group" "databricks" {
   }
 }
 
-# Associates the NSG with the databricks subnet
-resource "azurerm_subnet_network_security_group_association" "databricks" {
-  subnet_id                 = azurerm_subnet.databricks.id
+# Associates the NSG with the databricks public subnet
+resource "azurerm_subnet_network_security_group_association" "databricks_public" {
+  subnet_id                 = azurerm_subnet.databricks_public.id
+  network_security_group_id = azurerm_network_security_group.databricks.id
+}
+
+# Associates the NSG with the databricks private subnet
+resource "azurerm_subnet_network_security_group_association" "databricks_private" {
+  subnet_id                 = azurerm_subnet.databricks_private.id
   network_security_group_id = azurerm_network_security_group.databricks.id
 }
