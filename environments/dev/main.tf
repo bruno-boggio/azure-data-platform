@@ -61,3 +61,21 @@ module "storage" {
     managed_by  = "terraform"
   }
 }
+
+# Calls the private-endpoint module to privately connect the storage account to the VNet
+module "storage_private_endpoint" {
+  source = "../../modules/private-endpoint"
+
+  resource_group_name  = module.resource_group.name
+  location             = module.resource_group.location
+  vnet_id              = module.networking.vnet_id
+  subnet_id            = module.networking.private_endpoints_subnet_id
+  storage_account_id   = module.storage.id
+  storage_account_name = module.storage.name
+
+  tags = {
+    environment = var.environment
+    project     = var.project_name
+    managed_by  = "terraform"
+  }
+}
