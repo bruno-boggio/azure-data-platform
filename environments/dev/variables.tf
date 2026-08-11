@@ -10,6 +10,11 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "allowed_ip" {
+  description = "Public IP allowed to access data platform resources (your machine)"
+  type        = string
+}
+
 variable "location" {
   description = "Azure region"
   type        = string

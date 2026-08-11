@@ -45,3 +45,19 @@ module "key_vault" {
     managed_by  = "terraform"
   }
 }
+
+# Calls the storage module to create the ADLS Gen2 data lake
+module "storage" {
+  source = "../../modules/storage"
+
+  name                = "st${var.project_name}${var.environment}"
+  location            = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  allowed_ip          = var.allowed_ip
+
+  tags = {
+    environment = var.environment
+    project     = var.project_name
+    managed_by  = "terraform"
+  }
+}
