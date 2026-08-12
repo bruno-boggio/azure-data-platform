@@ -100,3 +100,25 @@ module "databricks" {
     managed_by  = "terraform"
   }
 }
+
+# Calls the data-factory module
+module "data_factory" {
+  source = "../../modules/data-factory"
+
+  name                = "adf-${var.project_name}-${var.environment}"
+  location            = module.resource_group.location
+  resource_group_name = module.resource_group.name
+
+  tags = {
+    environment = var.environment
+    project     = var.project_name
+    managed_by  = "terraform"
+  }
+}
+
+# Grants the Data Factory's managed identity permission to read/write the storage account
+resource "azurerm_role_assignment" "adf_storage_access" {
+  scope                = module.storage.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = module.data_factory.identity_principal_id
+}

@@ -153,6 +153,10 @@ resource "azurerm_network_security_group" "databricks" {
     source_address_prefix      = "*"
     destination_address_prefix = "Storage"
   }
+
+  lifecycle {
+    ignore_changes = [security_rule]
+  }
 }
 
 # Associates the NSG with the databricks public subnet
