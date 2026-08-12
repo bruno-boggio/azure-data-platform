@@ -79,3 +79,24 @@ module "storage_private_endpoint" {
     managed_by  = "terraform"
   }
 }
+
+# Calls the databricks module to create the workspace with VNet injection
+module "databricks" {
+  source = "../../modules/databricks"
+
+  name                = "dbw-${var.project_name}-${var.environment}"
+  location            = module.resource_group.location
+  resource_group_name = module.resource_group.name
+  vnet_id             = module.networking.vnet_id
+  public_subnet_name  = module.networking.databricks_public_subnet_name
+  private_subnet_name = module.networking.databricks_private_subnet_name
+
+  public_subnet_nsg_association_id  = module.networking.databricks_public_subnet_nsg_association_id
+  private_subnet_nsg_association_id = module.networking.databricks_private_subnet_nsg_association_id
+
+  tags = {
+    environment = var.environment
+    project     = var.project_name
+    managed_by  = "terraform"
+  }
+}
