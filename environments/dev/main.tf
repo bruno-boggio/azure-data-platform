@@ -122,3 +122,21 @@ resource "azurerm_role_assignment" "adf_storage_access" {
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = module.data_factory.identity_principal_id
 }
+
+# Calls the sql module to create the serving layer database
+module "sql" {
+  source = "../../modules/sql"
+
+  name                = "sql-${var.project_name}-${var.environment}"
+  database_name       = "sqldb-${var.project_name}"
+  location            = "brazilsouth"
+  resource_group_name = module.resource_group.name
+  aad_admin_login     = "azpdip@outlook.com"
+  aad_admin_object_id = "69394d62-0095-44aa-a890-8098b9817e3b"
+
+  tags = {
+    environment = var.environment
+    project     = var.project_name
+    managed_by  = "terraform"
+  }
+}
