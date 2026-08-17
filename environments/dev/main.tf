@@ -38,6 +38,7 @@ module "key_vault" {
   location            = module.resource_group.location
   resource_group_name = module.resource_group.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
+  allowed_ip          = var.allowed_ip
 
   tags = {
     environment = var.environment
